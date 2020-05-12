@@ -20,15 +20,25 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="column.hpp" />
+    <ClInclude Include="file.hpp" />
+    <ClInclude Include="int64_column.hpp" />
     <ClInclude Include="record.hpp" />
     <ClInclude Include="root.hpp" />
+    <ClInclude Include="string_column.hpp" />
     <ClInclude Include="table.hpp" />
     <ClInclude Include="tcolumn.hpp" />
+    <ClInclude Include="time_column.hpp" />
+    <ClInclude Include="context.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="column.cpp" />
+    <ClCompile Include="file.cpp" />
+    <ClCompile Include="int64_column.cpp" />
     <ClCompile Include="root.cpp" />
+    <ClCompile Include="string_column.cpp" />
     <ClCompile Include="table.cpp" />
+    <ClCompile Include="time_column.cpp" />
+    <ClCompile Include="context.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

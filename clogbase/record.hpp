@@ -13,21 +13,21 @@ namespace clogbase {
 	class Record {
 	public:
 		template <typename T>
-		const T& get(const TColumn<T> column) const;
+		const T& get(const TColumn<T> &column) const;
 
-		template <typename T>
-		void set(const TColumn<T> column, const T &value) const;
+		template <typename T, typename V>
+		void set(const TColumn<T> &column, const V &value);
 	private:
 		map<const Column*, any> _fields;
 	};
 
 	template <typename T>
-	const T& Record::get(const TColumn<T> column) const {
-		return _fields.at(&column);
+	const T& Record::get(const TColumn<T> &column) const {
+		return any_cast<const T&>(_fields.at(&column));
 	}
 
-	template <typename T>
-	void Record::set(const TColumn<T> column, const T& value) const {
-		_fields[&column] = value;
+	template <typename T, typename V>
+	void Record::set(const TColumn<T> &column, const V& value) {
+		_fields[&column] = T(value);
 	}
 }

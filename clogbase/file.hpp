@@ -1,21 +1,18 @@
 #pragma once
 
 #include <filesystem>
+#include <fstream>
 
 namespace clogbase {
 	using namespace std;
 	namespace fs = filesystem;
 
-	class Table;
-
-	class Root {
+	class File {
 	public:
-		Root(const fs::path& path);
-		void add_table(Table& table);
+		File(fs::path path);
 		void open();
-		const fs::path& path() const;
 	private:
 		fs::path _path;
-		vector<Table*> _tables;
+		fstream _stream;
 	};
 }

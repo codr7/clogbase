@@ -7,8 +7,8 @@ namespace clogbase {
 
 	class Column {
 	public:
-		const string& name() const;
-	private:
-		string _name;
+		const string name;
+
+		Column(const string& name);
 	};
 }

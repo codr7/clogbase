@@ -1,7 +1,6 @@
 #include "column.hpp"
 
 namespace clogbase {
-	const string& Column::name() const {
-		return _name;
+	Column::Column(const string& name) : name(name) {
 	}
 }

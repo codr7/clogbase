@@ -27,6 +27,7 @@
     <ClInclude Include="string_column.hpp" />
     <ClInclude Include="table.hpp" />
     <ClInclude Include="tcolumn.hpp" />
+    <ClInclude Include="types.hpp" />
     <ClInclude Include="time_column.hpp" />
     <ClInclude Include="context.hpp" />
   </ItemGroup>

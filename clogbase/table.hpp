@@ -22,14 +22,12 @@ namespace clogbase {
 		void open();
 		int64_t get_id();
 		bool exists(const Record& record) const;
-		void load(RecordId id, Record& record);
+		bool load(RecordId id, Record& record) const;
 		void store(const Record& record, Context& context);
 	private:
-		using Offset = int64_t;
-
 		map<string, const Column*> _columns;
 		int64_t _next_id;
-		map<RecordId, Offset> _records;
+		map<RecordId, File::Offset> _records;
 		File _key_file, _data_file;
 	};
 }

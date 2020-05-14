@@ -29,7 +29,31 @@ namespace clogbase {
 		return _records.find(record.get(id)) != _records.end();
 	}
 
-	void Table::load(RecordId id, Record& record) {
+	bool Table::load(RecordId id, Record& record) const {
+		auto found(_records.find(id));
+		
+		if (found == _records.end()) {
+			return false;
+		}
+
+		File& f(const_cast<Table*>(this)->_data_file);
+		f.seek(found->second);
+		int8_t column_count(-1);
+		f.read(column_count);
+
+		for (int8_t i(0); i < column_count; i++) {
+			string column_name;
+			f.read(column_name);
+			auto column(_columns.find(column_name));
+			
+			if (column == _columns.end()) {
+				continue;
+			}
+
+			column->second->load_value(f);
+		}
+
+		return true;
 	}
 
 	void Table::store(const Record& record, Context& context) {

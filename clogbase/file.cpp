@@ -7,4 +7,8 @@ namespace clogbase {
 	void File::open() {
 		_stream.open(_path, fstream::in|fstream::out|fstream::binary);
 	}
+
+	void File::seek(Offset offset) {
+		_stream.seekg(offset);
+	}
 }

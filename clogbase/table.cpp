@@ -40,7 +40,7 @@ namespace clogbase {
 		f.seek(found->second);
 		int8_t column_count(-1);
 		f.read(column_count);
-
+		
 		for (int8_t i(0); i < column_count; i++) {
 			string column_name;
 			f.read(column_name);

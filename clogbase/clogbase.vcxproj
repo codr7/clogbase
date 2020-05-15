@@ -22,6 +22,7 @@
     <ClInclude Include="column.hpp" />
     <ClInclude Include="file.hpp" />
     <ClInclude Include="int64_column.hpp" />
+    <ClInclude Include="model.hpp" />
     <ClInclude Include="record.hpp" />
     <ClInclude Include="root.hpp" />
     <ClInclude Include="string_column.hpp" />
@@ -36,6 +37,7 @@
     <ClCompile Include="file.cpp" />
     <ClCompile Include="int64_column.cpp" />
     <ClCompile Include="root.cpp" />
+    <ClCompile Include="model.cpp" />
     <ClCompile Include="string_column.cpp" />
     <ClCompile Include="table.cpp" />
     <ClCompile Include="time_column.cpp" />

@@ -11,4 +11,9 @@ namespace clogbase {
 	void File::seek(Offset offset) {
 		_stream.seekg(offset);
 	}
+
+	bool File::eof() const {
+		return _stream.eof();
+	}
+
 }

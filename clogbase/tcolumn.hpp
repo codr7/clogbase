@@ -11,7 +11,8 @@ namespace clogbase {
 		const ColumnType<T>& type;
 
 		TColumn(const string& name, const ColumnType<T>& type);
-		any load_value(File& in) const;
+		any load_value(File& in) const override;
+		void store_value(const any& value, File& out) const override;
 	};
 
 	template <typename T>
@@ -21,5 +22,10 @@ namespace clogbase {
 	template <typename T>
 	any TColumn<T>::load_value(File& in) const {
 		return type.load_value(in);
+	}
+
+	template <typename T>
+	void TColumn<T>::store_value(const any& value, File& out) const {
+		type.store_value(any_cast<const T&>(value), out);
 	}
 }

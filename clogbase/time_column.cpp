@@ -2,7 +2,7 @@
 
 namespace clogbase {
 	const ColumnType<Time>& time_type() {
-		static ColumnType<Time> type;
+		static BasicType<Time> type;
 		return type;
 	}
 

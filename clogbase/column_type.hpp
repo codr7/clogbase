@@ -10,14 +10,26 @@ namespace clogbase {
 	template <typename T>
 	class ColumnType {
 	public:
-		using Value = T;
-		virtual any load_value(File& in) const;
+		virtual T load_value(File& in) const = 0;
+		virtual void store_value(const T &value, File& out) const = 0;
 	};
 
 	template <typename T>
-	any ColumnType<T>::load_value(File& in) const {
+	class BasicType: public ColumnType<T> {
+	public:
+		T load_value(File& in) const override;
+		void store_value(const T& value, File& out) const override;
+	};
+
+	template <typename T>
+	T BasicType<T>::load_value(File& in) const {
 		T value;
 		in.read(value);
 		return value;
+	}
+
+	template <typename T>
+	void BasicType<T>::store_value(const T& value, File& out) const {
+		out.write(value);
 	}
 }

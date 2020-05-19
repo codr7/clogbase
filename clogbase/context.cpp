@@ -8,17 +8,24 @@ namespace clogbase {
 		commit();
 	}
 
+	void Context::operator <<(Action action) {
+		_actions.push_back(action);
+	}
+
 	void Context::commit() {
 		if (parent) {
-			copy(_actions.begin(), _actions.end(), back_inserter(parent->_actions));
+			move(_actions.begin(), _actions.end(), back_inserter(parent->_actions));
+			_actions.clear();
 		}
 		else {
-			for (auto& a : _actions) {
+			vector<Action> todo;
+			move(_actions.begin(), _actions.end(), back_inserter(todo));
+			_actions.clear();
+
+			for (auto& a : todo) {
 				a();
 			}
 		}
-
-		_actions.clear();
 	}
 
 	void Context::rollback() {

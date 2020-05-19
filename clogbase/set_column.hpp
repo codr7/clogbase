@@ -11,7 +11,8 @@ namespace clogbase {
 		const ColumnType<T>& item_type;
 
 		SetType(const ColumnType<T>& item_type);
-		any load_value(File& in) const override;
+		set<T> load_value(File& in) const override;
+		void store_value(const set<T>& value, File& out) const override;
 	};
 
 	template <typename T>
@@ -19,7 +20,7 @@ namespace clogbase {
 	}
 
 	template <typename T>
-	any SetType<T>::load_value(File& in) const {
+	set<T> SetType<T>::load_value(File& in) const {
 		int32_t size;
 		in.read(size);
 		set<T> value;
@@ -29,6 +30,15 @@ namespace clogbase {
 		}
 
 		return value;
+	}
+
+	template <typename T>
+	void SetType<T>::store_value(const set<T>& value, File& out) const {
+		out.write(value.size());
+		
+		for (const T& item : value) {
+			out.write(item);
+		}
 	}
 
 	template <typename T>

@@ -2,7 +2,7 @@
 
 namespace clogbase {
 	const ColumnType<int64_t>& int64_type() {
-		static ColumnType<int64_t> type;
+		static BasicType<int64_t> type;
 		return type;
 	}
 

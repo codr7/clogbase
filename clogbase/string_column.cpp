@@ -2,7 +2,7 @@
 
 namespace clogbase {
 	const ColumnType<string>& string_type() {
-		static ColumnType<string> type;
+		static BasicType<string> type;
 		return type;
 	}
 

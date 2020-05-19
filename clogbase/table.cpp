@@ -1,12 +1,14 @@
 #include <iterator> 
+
+#include "context.hpp"
 #include "table.hpp"
 
 namespace clogbase {
 	Table::Table(Root &root, const string& name, initializer_list<const Column*> columns):
 		name(name),
 		id(name + "_id"),
-		_key_file(root.path() / fs::path(name + ".dat")),
-		_data_file(root.path() / fs::path(name + ".key")) {
+		_key_file(root.path() / fs::path(name + ".key")),
+		_data_file(root.path() / fs::path(name + ".dat")) {
 
 		transform(
 			columns.begin(), columns.end(), 
@@ -57,5 +59,45 @@ namespace clogbase {
 	}
 
 	void Table::store(const Record& record, Context& context) {
+		context << [record, this]() {
+			unique_ptr<Record> prev;
+			const auto id(record.get(id));
+
+			if (exists(record)) {
+				prev.reset(new Record());
+				load(id, *prev);
+
+				/*
+				for _, ix : = range self.indexes{
+					if _, err : = ix.Remove(*prev); err != nil {
+						return -1, errors.Wrapf(err, "Failed removing from index: %v", ix.name)
+					}
+				}*/
+			}
+
+			const auto offset(_data_file.seek_eof());
+			_data_file.write(record.size());
+
+			for (const Field& f : record) {
+				auto& c(*f.first);
+				_data_file.write(c.name);
+				c.store_value(f.second, _data_file);
+			}
+
+			_data_file.flush();
+			_key_file.write(id);
+			_key_file.write(offset);
+			_key_file.flush();
+			_records[id] = offset;
+
+			/*
+			for _, ix : = range self.indexes{
+				if ok, err : = ix.Add(record); err != nil {
+					return -1, errors.Wrapf(err, "Failed adding to index: %v", ix.name)
+				} else if !ok {
+					return -1, errors.New(fmt.Sprintf("Duplicate key in index: %v", ix.name))
+				}
+			}*/
+		};
 	}
 }

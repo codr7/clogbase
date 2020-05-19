@@ -9,9 +9,16 @@ namespace clogbase {
 	using namespace std;
 
 	using RecordId = int64_t;
+	using Field = pair<const Column*, any>;
 
 	class Record {
 	public:
+		using Fields = map<const Column*, any>;
+
+		size_t size() const;
+		Fields::const_iterator begin() const;
+		Fields::const_iterator end() const;
+
 		template <typename T>
 		const T& get(const TColumn<T> &column) const;
 
@@ -21,7 +28,7 @@ namespace clogbase {
 		template <typename T, typename V>
 		void set(const TColumn<T> &column, const V &value);
 	private:
-		map<const Column*, any> _fields;
+		Fields _fields;
 	};
 
 	template <typename T>

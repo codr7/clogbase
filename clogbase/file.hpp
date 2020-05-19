@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cinttypes>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -55,9 +56,10 @@ namespace clogbase {
 		_stream >> length;
 		
 		if (!_stream.fail()) {
-			string digits;
-			digits.reserve(length);
-			_stream.read(digits.data(), length);
+			string buffer;
+			buffer.reserve(length);
+			_stream.read(buffer.data(), length);
+			value = static_cast<T>(strtoimax(buffer.c_str(), NULL, 10));
 		}
 	}
 
@@ -70,8 +72,11 @@ namespace clogbase {
 	void File::read(string& value) {
 		int32_t length(-1);
 		read(length);
-		value.reserve(length);
-		_stream.read(value.data(), length);
+
+		if (!_stream.fail()) {
+			value.reserve(length);
+			_stream.read(value.data(), length);
+		}
 	}
 
 	template <>

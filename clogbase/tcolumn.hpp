@@ -13,6 +13,7 @@ namespace clogbase {
 		TColumn(const string& name, const ColumnType<T>& type);
 		any load_value(File& in) const override;
 		void store_value(const any& value, File& out) const override;
+		Order compare_values(const any& x, const any& y) const;
 	};
 
 	template <typename T>
@@ -28,4 +29,10 @@ namespace clogbase {
 	void TColumn<T>::store_value(const any& value, File& out) const {
 		type.store_value(any_cast<const T&>(value), out);
 	}
+
+	template <typename T>
+	Order TColumn<T>::compare_values(const any& x, const any& y) const {
+		return type.compare_values(any_cast<const T&>(x), any_cast<const T&>(y));
+	}
+
 }

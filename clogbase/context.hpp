@@ -1,14 +1,14 @@
 #pragma once
 
+#include <deque>
 #include <functional>
-#include <vector>
 
 namespace clogbase {
 	using namespace std;
 
 	class Context {
 	public:
-		using Action = function<void()>;
+		using Action = function<void(Context &)>;
 		Context* const parent;
 
 		Context(Context* prev = nullptr);
@@ -18,6 +18,6 @@ namespace clogbase {
 		void commit();
 		void rollback();
 	private:
-		vector<Action> _actions;
+		deque<Action> _actions;
 	};
 }

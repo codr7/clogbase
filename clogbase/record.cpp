@@ -12,4 +12,8 @@ namespace clogbase {
 	Record::Fields::const_iterator Record::end() const {
 		return _fields.end();
 	}
+
+	const any& Record::get(const Column& column) const {
+		return _fields.at(&column);
+	}
 }

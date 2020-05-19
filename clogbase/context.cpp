@@ -18,12 +18,9 @@ namespace clogbase {
 			_actions.clear();
 		}
 		else {
-			vector<Action> todo;
-			move(_actions.begin(), _actions.end(), back_inserter(todo));
-			_actions.clear();
-
-			for (auto& a : todo) {
-				a();
+			while (!_actions.empty()) {
+				_actions.front()(*this);
+				_actions.pop_front();
 			}
 		}
 	}

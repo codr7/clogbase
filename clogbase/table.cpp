@@ -1,21 +1,23 @@
 #include <iterator> 
 
 #include "context.hpp"
+#include "index.hpp"
 #include "table.hpp"
 
 namespace clogbase {
-	Table::Table(Root &root, const string& name, initializer_list<const Column*> columns):
-		name(name),
+	Table::Table(Root &root, const string& name, initializer_list<AbstractIndex*> indexes, initializer_list<const Column*> columns):
 		id(name + "_id"),
-		_key_file(root.path() / fs::path(name + ".key")),
-		_data_file(root.path() / fs::path(name + ".dat")) {
+		_name(name),
+		_indexes(indexes),
+		_key_file(root.path() / fs::path(name + ".cti")),
+		_data_file(root.path() / fs::path(name + ".ctd")) {
 
 		transform(
 			columns.begin(), columns.end(), 
 			inserter(_columns, _columns.end()), 
-			[](const Column* c) { return make_pair(c->name, c); });
+			[](const Column* c) { return make_pair(c->name(), c); });
 
-		root.add_table(*this);
+		root << *this;
 	}
 
 	void Table::open() {
@@ -34,6 +36,7 @@ namespace clogbase {
 			_key_file.read(offset);
 
 			_records[id] = offset;
+			_next_id = max(_next_id, id);
 		}
 	}
 
@@ -73,20 +76,17 @@ namespace clogbase {
 	}
 
 	void Table::store(const Record& record, Context& context) {
-		context << [record, this]() {
+		context << [record, this](Context &context) {
 			unique_ptr<Record> prev;
 			const auto id(record.get(id));
 
-			if (exists(record)) {
+			if (_records.find(id) != _records.end()) {
 				prev.reset(new Record());
 				load(id, *prev);
 
-				/*
-				for _, ix : = range self.indexes{
-					if _, err : = ix.Remove(*prev); err != nil {
-						return -1, errors.Wrapf(err, "Failed removing from index: %v", ix.name)
-					}
-				}*/
+				for (auto ix: _indexes) {
+					ix->remove(*prev, id, context);
+				}
 			}
 
 			const auto offset(_data_file.seek_eof());
@@ -94,7 +94,7 @@ namespace clogbase {
 
 			for (const Field& f : record) {
 				auto& c(*f.first);
-				_data_file.write(c.name);
+				_data_file.write(c.name());
 				c.store_value(f.second, _data_file);
 			}
 
@@ -104,14 +104,9 @@ namespace clogbase {
 			_key_file.flush();
 			_records[id] = offset;
 
-			/*
-			for _, ix : = range self.indexes{
-				if ok, err : = ix.Add(record); err != nil {
-					return -1, errors.Wrapf(err, "Failed adding to index: %v", ix.name)
-				} else if !ok {
-					return -1, errors.New(fmt.Sprintf("Duplicate key in index: %v", ix.name))
-				}
-			}*/
+			for (auto ix: _indexes) {
+				ix->add(record, id, context);
+			}
 		};
 	}
 }

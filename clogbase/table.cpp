@@ -21,6 +21,20 @@ namespace clogbase {
 	void Table::open() {
 		_key_file.open();
 		_data_file.open();
+
+		for (;;) {
+			RecordId id;
+			_key_file.read(id);
+			
+			if (_key_file.eof()) {
+				break;
+			}
+
+			File::Offset offset;
+			_key_file.read(offset);
+
+			_records[id] = offset;
+		}
 	}
 
 	int64_t Table::get_id() {

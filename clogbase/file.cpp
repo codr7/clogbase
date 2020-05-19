@@ -5,7 +5,7 @@ namespace clogbase {
 	}
 	
 	void File::open() {
-		_stream.exceptions(fstream::failbit|fstream::badbit);
+		_stream.exceptions(fstream::badbit);
 		_stream.open(_path, fstream::in|fstream::out|fstream::app|fstream::binary);
 	}
 
@@ -19,8 +19,10 @@ namespace clogbase {
 	}
 
 
-	bool File::eof() const {
-		return _stream.eof();
+	bool File::eof() {
+		bool result(_stream.fail());
+		_stream.clear();
+		return result;
 	}
 
 	void File::flush() {

@@ -18,7 +18,7 @@ namespace clogbase {
 		void open();
 		void seek(Offset offset);
 		Offset seek_eof();
-		bool eof() const;
+		bool eof();
 		void flush();
 
 		template <typename T>
@@ -53,9 +53,12 @@ namespace clogbase {
 	void File::read(T& value) {
 		int8_t length(-1);
 		_stream >> length;
-		string digits;
-		digits.reserve(length);
-		_stream.read(digits.data(), length);
+		
+		if (!_stream.fail()) {
+			string digits;
+			digits.reserve(length);
+			_stream.read(digits.data(), length);
+		}
 	}
 
 	template <>

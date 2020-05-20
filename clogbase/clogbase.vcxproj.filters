@@ -60,9 +60,6 @@
     <ClInclude Include="index.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="schema.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="abstract_index.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

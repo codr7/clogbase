@@ -8,24 +8,30 @@
 #include "int64_column.hpp"
 #include "record.hpp"
 #include "root.hpp"
-#include "schema.hpp"
 
 namespace clogbase {
 	using namespace std;
 
 	class Context;
 
-	class Table: public Schema {
+	template <size_t KEY_SIZE>
+	class Index;
+
+	class Table {
 	public:
+		template <size_t KEY_SIZE>
+		friend class Index;
+
 		const Int64Column id;
 
-		Table(Root &root, const string& name, initializer_list<AbstractIndex*> indexes, initializer_list<const Column *> columns);
+		Table(Root &root, const string& name, initializer_list<const Column *> columns);
 		void open();
 		int64_t get_id();
 		bool exists(const Record& record) const;
 		bool load(RecordId id, Record& record) const;
 		void store(const Record& record, Context& context);
 	private:
+		Root& _root;
 		const string _name;
 		set<AbstractIndex*> _indexes;
 		map<string, const Column*> _columns;

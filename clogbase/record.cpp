@@ -1,6 +1,11 @@
 #include "record.hpp"
+#include "table.hpp"
 
 namespace clogbase {
+	RecordId Record::id(const Table& table) const {
+		return get(table.id);
+	}
+
 	size_t Record::size() const {
 		return _fields.size();
 	}

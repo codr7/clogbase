@@ -28,7 +28,6 @@
     <ClInclude Include="model.hpp" />
     <ClInclude Include="record.hpp" />
     <ClInclude Include="root.hpp" />
-    <ClInclude Include="schema.hpp" />
     <ClInclude Include="set_column.hpp" />
     <ClInclude Include="string_column.hpp" />
     <ClInclude Include="table.hpp" />

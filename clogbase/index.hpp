@@ -9,6 +9,7 @@
 #include "file.hpp"
 #include "record.hpp"
 #include "root.hpp"
+#include "table.hpp"
 
 namespace clogbase {
 	using namespace std;
@@ -20,13 +21,14 @@ namespace clogbase {
 	public:
 		using Key = array<any, KEY_SIZE>;
 
-		Index(Root& root, const string& name, array<const Column*, KEY_SIZE> columns);
+		Index(Table &table, const string& name, array<string, KEY_SIZE> columns);
 		const string& name() const override;
-		void open();
+		void open() override;
 		Order compare_keys(const Key& x, const Key& y) const;
-		void add(const Record& record, RecordId id, Context& context) override;
-		void remove(const Record& record, RecordId id, Context& context) override;
+		void add(const Record& record, Context& context) override;
+		void remove(const Record& record, Context& context) override;
 	private:
+		Table& _table;
 		const string _name;
 		array<const Column*, KEY_SIZE> _columns;
 		multimap<Key, RecordId, function<bool (const Key&, const Key&)>> _records;
@@ -34,12 +36,17 @@ namespace clogbase {
 	};
 
 	template <size_t KEY_SIZE>
-	Index<KEY_SIZE>::Index(Root& root, const string& name, array<const Column*, KEY_SIZE> columns) :
+	Index<KEY_SIZE>::Index(Table &table, const string& name, array<string, KEY_SIZE> columns) :
+		_table(table),
 		_name(name),
-		_columns(columns),
 		_records([this](const Key& x, const Key& y) { return compare_keys(x, y) == Order::LT; }),
-		_file(root.path() / fs::path(name + ".cid")) {
-		root << *this;
+		_file(table._root.path() / fs::path(name + ".cid")) {
+		transform(
+			columns.begin(), columns.end(),
+			_columns.begin(),
+			[&table](const string & c) { return table._columns.find(c)->second; });
+
+		table._indexes.insert(this);
 	}
 
 	template <size_t KEY_SIZE>
@@ -95,12 +102,15 @@ namespace clogbase {
 	}
 
 	template <size_t KEY_SIZE>
-	void Index<KEY_SIZE>::add(const Record& record, RecordId id, Context& context) {
+	void Index<KEY_SIZE>::add(const Record& record, Context& context) {
 		Key key;
 
-		for (size_t i = 0; i < KEY_SIZE; i++) {
+		/*for (size_t i = 0; i < KEY_SIZE; i++) {
 			key[i] = record.get(*_columns[i]);
-		}
+		}*/
+
+		transform(_columns.begin(), _columns.end(), key.begin(), [&record](auto c) { return record.get(*c);  });
+		const RecordId id(record.id(_table));
 
 		context << [this, key, id](Context& context) {
 			for (size_t i = 0; i < KEY_SIZE; i++) {
@@ -108,17 +118,20 @@ namespace clogbase {
 			}
 
 			_file.write(id);
+			_file.flush();
 			_records.insert(make_pair(key, id));
 		};
 	}
 
 	template <size_t KEY_SIZE>
-	void Index<KEY_SIZE>::remove(const Record &record, RecordId id, Context& context) {
+	void Index<KEY_SIZE>::remove(const Record &record, Context& context) {
 		Key key;
 
 		for (size_t i = 0; i < KEY_SIZE; i++) {
 			key[i] = record.get(*_columns[i]);
 		}
+
+		const RecordId id(record.id(_table));
 
 		context << [this, key, id](Context& context) {
 			for (auto i(_records.find(key)); i != _records.end() && compare_keys(i->first, key) == Order::EQ; i++) {
@@ -128,6 +141,7 @@ namespace clogbase {
 					}
 
 					_file.write(-id);
+					_file.flush();
 					_records.erase(i);
 					break;
 				}

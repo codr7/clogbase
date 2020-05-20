@@ -5,10 +5,10 @@
 #include "table.hpp"
 
 namespace clogbase {
-	Table::Table(Root &root, const string& name, initializer_list<AbstractIndex*> indexes, initializer_list<const Column*> columns):
+	Table::Table(Root &root, const string& name, initializer_list<const Column*> columns):
 		id(name + "_id"),
+		_root(root),
 		_name(name),
-		_indexes(indexes),
 		_key_file(root.path() / fs::path(name + ".cti")),
 		_data_file(root.path() / fs::path(name + ".ctd")) {
 
@@ -37,6 +37,10 @@ namespace clogbase {
 
 			_records[id] = offset;
 			_next_id = max(_next_id, id);
+		}
+
+		for (auto ix : _indexes) {
+			ix->open();
 		}
 	}
 
@@ -85,7 +89,7 @@ namespace clogbase {
 				load(id, *prev);
 
 				for (auto ix: _indexes) {
-					ix->remove(*prev, id, context);
+					ix->remove(*prev, context);
 				}
 			}
 
@@ -105,7 +109,7 @@ namespace clogbase {
 			_records[id] = offset;
 
 			for (auto ix: _indexes) {
-				ix->add(record, id, context);
+				ix->add(record, context);
 			}
 		};
 	}

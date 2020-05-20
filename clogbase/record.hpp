@@ -11,10 +11,13 @@ namespace clogbase {
 	using RecordId = int64_t;
 	using Field = pair<const Column*, any>;
 
+	class Table;
+
 	class Record {
 	public:
 		using Fields = map<const Column*, any>;
 
+		RecordId id(const Table& table) const;
 		size_t size() const;
 		Fields::const_iterator begin() const;
 		Fields::const_iterator end() const;

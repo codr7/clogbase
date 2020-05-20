@@ -6,16 +6,16 @@ namespace clogbase {
 	using namespace std;
 	namespace fs = filesystem;
 
-	class Schema;
+	class Table;
 	
 	class Root {
 	public:
 		Root(const fs::path& path);
-		void operator <<(Schema& schema);
+		void operator <<(Table& table);
 		void open();
 		const fs::path& path() const;
 	private:
 		fs::path _path;
-		vector<Schema*> _schemas;
+		vector<Table*> _tables;
 	};
 }

@@ -1,19 +1,19 @@
 #include "root.hpp"
-#include "schema.hpp"
+#include "table.hpp"
 
 namespace clogbase {
 	Root::Root(const fs::path& path) : _path(path) {
 	}
 
-	void Root::operator <<(Schema& schema) {
-		_schemas.push_back(&schema);
+	void Root::operator <<(Table& table) {
+		_tables.push_back(&table);
 	}
 
 	void Root::open() {
 		fs::create_directories(_path);
 		
-		for (auto s : _schemas) {
-			s->open();
+		for (auto t : _tables) {
+			t->open();
 		}
 	}
 

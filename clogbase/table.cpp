@@ -20,18 +20,26 @@ namespace clogbase {
 		root << *this;
 	}
 
-	void Table::open() {
-		_key_file.open();
-		_data_file.open();
+	void Table::open(const Time &max_time, bool read_only) {
+		_key_file.open(read_only);
+		_data_file.open(read_only);
 
 		for (;;) {
-			RecordId id;
-			_key_file.read(id);
-			
+			Time time;
+			_key_file.read(time);
+
 			if (_key_file.eof()) {
 				break;
 			}
 
+			if (time >= max_time) {
+				_key_file.seek_eof();
+				break;
+			}
+
+			RecordId id;
+			_key_file.read(id);
+			
 			File::Offset offset;
 			_key_file.read(offset);
 
@@ -40,7 +48,7 @@ namespace clogbase {
 		}
 
 		for (auto ix : _indexes) {
-			ix->open();
+			ix->open(max_time, read_only);
 		}
 	}
 
@@ -103,6 +111,7 @@ namespace clogbase {
 			}
 
 			_data_file.flush();
+			_key_file.write(Clock::now());
 			_key_file.write(id);
 			_key_file.write(offset);
 			_key_file.flush();

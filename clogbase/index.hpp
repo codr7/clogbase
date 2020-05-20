@@ -23,7 +23,7 @@ namespace clogbase {
 
 		Index(Table &table, const string& name, array<string, KEY_SIZE> columns);
 		const string& name() const override;
-		void open() override;
+		void open(const Time &max_time, bool read_only) override;
 		Order compare_keys(const Key& x, const Key& y) const;
 		void add(const Record& record, Context& context) override;
 		void remove(const Record& record, Context& context) override;
@@ -55,17 +55,25 @@ namespace clogbase {
 	}
 
 	template <size_t KEY_SIZE>
-	void Index<KEY_SIZE>::open() {
-		_file.open();
+	void Index<KEY_SIZE>::open(const Time &max_time, bool read_only) {
+		_file.open(read_only);
 
 		for (;;) {
-			Key key;
-			key[0] = _columns[0]->load_value(_file);
-			
+			Time time;
+			_file.read(time);
+
 			if (_file.eof()) {
 				break;
 			}
 
+			if (time >= max_time) {
+				_file.seek_eof();
+				break;
+			}
+
+			Key key;
+			key[0] = _columns[0]->load_value(_file);
+			
 			for (size_t i = 1; i < KEY_SIZE; i++) {
 				key[i] = _columns[i]->load_value(_file);
 			}
@@ -104,15 +112,12 @@ namespace clogbase {
 	template <size_t KEY_SIZE>
 	void Index<KEY_SIZE>::add(const Record& record, Context& context) {
 		Key key;
-
-		/*for (size_t i = 0; i < KEY_SIZE; i++) {
-			key[i] = record.get(*_columns[i]);
-		}*/
-
 		transform(_columns.begin(), _columns.end(), key.begin(), [&record](auto c) { return record.get(*c);  });
 		const RecordId id(record.id(_table));
 
 		context << [this, key, id](Context& context) {
+			_file.write(Clock::now());
+
 			for (size_t i = 0; i < KEY_SIZE; i++) {
 				_columns[i]->store_value(key[i], _file);
 			}
@@ -126,16 +131,14 @@ namespace clogbase {
 	template <size_t KEY_SIZE>
 	void Index<KEY_SIZE>::remove(const Record &record, Context& context) {
 		Key key;
-
-		for (size_t i = 0; i < KEY_SIZE; i++) {
-			key[i] = record.get(*_columns[i]);
-		}
-
+		transform(_columns.begin(), _columns.end(), key.begin(), [&record](auto c) { return record.get(*c);  });
 		const RecordId id(record.id(_table));
 
 		context << [this, key, id](Context& context) {
 			for (auto i(_records.find(key)); i != _records.end() && compare_keys(i->first, key) == Order::EQ; i++) {
 				if (i->second == id) {
+					_file.write(Clock::now());
+
 					for (size_t i = 0; i < KEY_SIZE; i++) {
 						_columns[i]->store_value(key[i], _file);
 					}

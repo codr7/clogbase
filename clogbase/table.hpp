@@ -25,7 +25,7 @@ namespace clogbase {
 		const Int64Column id;
 
 		Table(Root &root, const string& name, initializer_list<const Column *> columns);
-		void open();
+		void open(const Time &max_time, bool read_only);
 		int64_t get_id();
 		bool exists(const Record& record) const;
 		bool load(RecordId id, Record& record) const;

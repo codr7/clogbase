@@ -9,11 +9,11 @@ namespace clogbase {
 		_tables.push_back(&table);
 	}
 
-	void Root::open() {
+	void Root::open(const Time &max_time, bool read_only) {
 		fs::create_directories(_path);
 		
 		for (auto t : _tables) {
-			t->open();
+			t->open(max_time, read_only);
 		}
 	}
 

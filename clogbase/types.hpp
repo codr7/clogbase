@@ -5,5 +5,6 @@
 namespace clogbase {
 	using namespace std::chrono;
 
-	using Time = system_clock::time_point;
+	using Clock = system_clock;
+	using Time = Clock::time_point;
 }

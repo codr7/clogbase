@@ -16,7 +16,7 @@ namespace clogbase {
 		using Offset = int64_t;
 
 		File(fs::path path);
-		void open();
+		void open(bool read_only);
 		void seek(Offset offset);
 		Offset seek_eof();
 		bool eof();

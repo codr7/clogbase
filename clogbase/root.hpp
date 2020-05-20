@@ -2,6 +2,8 @@
 
 #include <filesystem>
 
+#include "types.hpp"
+
 namespace clogbase {
 	using namespace std;
 	namespace fs = filesystem;
@@ -12,7 +14,7 @@ namespace clogbase {
 	public:
 		Root(const fs::path& path);
 		void operator <<(Table& table);
-		void open();
+		void open(const Time &max_time, bool read_only);
 		const fs::path& path() const;
 	private:
 		fs::path _path;

@@ -4,9 +4,9 @@ namespace clogbase {
 	File::File(fs::path path) : _path(path) {
 	}
 	
-	void File::open() {
+	void File::open(bool read_only) {
 		_stream.exceptions(fstream::badbit);
-		_stream.open(_path, fstream::in|fstream::out|fstream::app|fstream::binary);
+		_stream.open(_path, read_only ? fstream::in | fstream::binary : fstream::in|fstream::out|fstream::app|fstream::binary);
 	}
 
 	void File::seek(Offset offset) {

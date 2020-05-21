@@ -9,6 +9,10 @@ namespace clogbase {
         return get(table.id);
     }
 
+    bool Model::load(RecordId id) {
+        return table.load(id, *this);
+    }
+
     void Model::store(Context& context) {
         table.store(*this, context);
     }

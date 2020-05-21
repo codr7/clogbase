@@ -1,8 +1,16 @@
 #include "time_column.hpp"
 
 namespace clogbase {
-	const ColumnType<Time>& time_type() {
-		static BasicType<Time> type;
+	Time TimeType::load_value(File& in) const {
+		return in.read_time();
+	}
+
+	void TimeType::store_value(const Time& value, File& out) const {
+		out.write_time(value);
+	}
+
+	const TimeType& time_type() {
+		static TimeType type;
 		return type;
 	}
 

@@ -12,6 +12,7 @@ namespace clogbase {
         
         Model(Table& table);
         int64_t id() const;
+        virtual bool load(RecordId id);
         virtual void store(Context& context);
     };
 }

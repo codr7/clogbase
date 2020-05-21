@@ -21,8 +21,7 @@ namespace clogbase {
 
 	template <typename T>
 	set<T> SetType<T>::load_value(File& in) const {
-		int32_t size;
-		in.read(size);
+		const auto size(in.read_int64());
 		set<T> value;
 
 		for (int32_t i = 0; i < size; i++) {
@@ -34,10 +33,10 @@ namespace clogbase {
 
 	template <typename T>
 	void SetType<T>::store_value(const set<T>& value, File& out) const {
-		out.write(value.size());
+		out.write_int64(value.size());
 		
 		for (const T& item : value) {
-			out.write(item);
+			item_type.store_value(item, out);
 		}
 	}
 

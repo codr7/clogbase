@@ -18,7 +18,11 @@ namespace clogbase {
 		return _fields.end();
 	}
 
-	const any& Record::get(const Column& column) const {
+	const any& Record::get_any(const Column& column) const {
 		return _fields.at(&column);
+	}
+
+	void Record::set_any(const Column& column, const any& value) {
+		_fields[&column] = value;
 	}
 }

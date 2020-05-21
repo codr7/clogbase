@@ -22,16 +22,18 @@ namespace clogbase {
 		Fields::const_iterator begin() const;
 		Fields::const_iterator end() const;
 
-		const any& get(const Column& column) const;
-
 		template <typename T>
 		const T& get(const TColumn<T>& column) const;
 
 		template <typename T>
 		T& get(const TColumn<T>& column);
 
+		const any& get_any(const Column& column) const;
+
 		template <typename T, typename V>
 		void set(const TColumn<T>& column, const V &value);
+
+		void set_any(const Column& column, const any& value);
 	private:
 		Fields _fields;
 	};

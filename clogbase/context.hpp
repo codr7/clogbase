@@ -1,7 +1,7 @@
 #pragma once
 
-#include <deque>
 #include <functional>
+#include <vector>
 
 namespace clogbase {
 	using namespace std;
@@ -18,6 +18,6 @@ namespace clogbase {
 		void commit();
 		void rollback();
 	private:
-		deque<Action> _actions;
+		vector<Action> _actions;
 	};
 }

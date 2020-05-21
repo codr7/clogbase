@@ -3,7 +3,13 @@
 #include "tcolumn.hpp"
 
 namespace clogbase {
-	const ColumnType<string>& string_type();
+	class StringType : public ColumnType<string> {
+	public:
+		string load_value(File& in) const;
+		void store_value(const string& value, File& out) const;
+	};
+
+	const StringType& string_type();
 
 	class StringColumn : public TColumn<string> {
 	public:

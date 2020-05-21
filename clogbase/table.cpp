@@ -20,13 +20,12 @@ namespace clogbase {
 		root << *this;
 	}
 
-	void Table::open(const Time &max_time, bool read_only) {
+	void Table::open(Time max_time, bool read_only) {
 		_key_file.open(read_only);
 		_data_file.open(read_only);
 
 		for (;;) {
-			Time time;
-			_key_file.read(time);
+			const auto time(_key_file.read_time());
 
 			if (_key_file.eof()) {
 				break;
@@ -37,12 +36,8 @@ namespace clogbase {
 				break;
 			}
 
-			RecordId id;
-			_key_file.read(id);
-			
-			File::Offset offset;
-			_key_file.read(offset);
-
+			const RecordId id(_key_file.read_int64());
+			const File::Offset offset(_key_file.read_int64());
 			_records[id] = offset;
 			_next_id = max(_next_id, id);
 		}
@@ -69,21 +64,21 @@ namespace clogbase {
 
 		File& f(const_cast<Table*>(this)->_data_file);
 		f.seek(found->second);
-		int8_t column_count(-1);
-		f.read(column_count);
-		
+		int8_t column_count(f.read_int8());
+
 		for (int8_t i(0); i < column_count; i++) {
-			string column_name;
-			f.read(column_name);
-			auto column(_columns.find(column_name));
-			
-			if (column == _columns.end()) {
+			const auto column_name(f.read_string());
+			const auto found(_columns.find(column_name));
+
+			if (found == _columns.end()) {
 				continue;
 			}
 
-			column->second->load_value(f);
+			const auto& c(*found->second);
+			record.set_any(c, c.load_value(f));
 		}
 
+		record.set(this->id, id);
 		return true;
 	}
 
@@ -102,18 +97,23 @@ namespace clogbase {
 			}
 
 			const auto offset(_data_file.seek_eof());
-			_data_file.write(record.size());
+			_data_file.write_int8(static_cast<int8_t>(record.size()-1));
 
 			for (const Field& f : record) {
-				auto& c(*f.first);
-				_data_file.write(c.name());
-				c.store_value(f.second, _data_file);
+				const auto c(f.first);
+				
+				if (c == &this->id) {
+					continue;
+				}
+
+				_data_file.write_string(c->name());
+				c->store_value(f.second, _data_file);
 			}
 
 			_data_file.flush();
-			_key_file.write(Clock::now());
-			_key_file.write(id);
-			_key_file.write(offset);
+			_key_file.write_time(Clock::now());
+			_key_file.write_int64(id);
+			_key_file.write_int64(offset);
 			_key_file.flush();
 			_records[id] = offset;
 

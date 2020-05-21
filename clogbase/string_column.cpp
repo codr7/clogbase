@@ -1,8 +1,16 @@
 #include "string_column.hpp"
 
 namespace clogbase {
-	const ColumnType<string>& string_type() {
-		static BasicType<string> type;
+	string StringType::load_value(File& in) const {
+		return in.read_string();
+	}
+
+	void StringType::store_value(const string& value, File& out) const {
+		out.write_string(value);
+	}
+
+	const StringType& string_type() {
+		static StringType type;
 		return type;
 	}
 

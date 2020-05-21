@@ -1,8 +1,16 @@
 #include "int64_column.hpp"
 
 namespace clogbase {
-	const ColumnType<int64_t>& int64_type() {
-		static BasicType<int64_t> type;
+	int64_t Int64Type::load_value(File& in) const {
+		return in.read_int64();
+	}
+	
+	void Int64Type::store_value(const int64_t& value, File& out) const {
+		out.write_int64(value);
+	}
+
+	const Int64Type& int64_type() {
+		static Int64Type type;
 		return type;
 	}
 

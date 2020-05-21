@@ -14,7 +14,7 @@ namespace clogbase {
 	public:
 		Root(const fs::path& path);
 		void operator <<(Table& table);
-		void open(const Time &max_time, bool read_only);
+		void open(Time max_time, bool read_only);
 		const fs::path& path() const;
 	private:
 		fs::path _path;

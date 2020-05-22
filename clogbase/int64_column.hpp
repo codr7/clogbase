@@ -1,6 +1,7 @@
 #pragma once
 
 #include "set_column.hpp"
+#include "vector_column.hpp"
 
 namespace clogbase {
 	class Int64Type: public ColumnType<int64_t> {
@@ -19,5 +20,10 @@ namespace clogbase {
 	class Int64SetColumn : public SetColumn<int64_t> {
 	public:
 		Int64SetColumn(const string& name);
+	};
+
+	class Int64VectorColumn : public VectorColumn<int64_t> {
+	public:
+		Int64VectorColumn(const string& name);
 	};
 }

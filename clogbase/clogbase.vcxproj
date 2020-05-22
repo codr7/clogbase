@@ -35,6 +35,7 @@
     <ClInclude Include="types.hpp" />
     <ClInclude Include="time_column.hpp" />
     <ClInclude Include="context.hpp" />
+    <ClInclude Include="vector_column.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="column.cpp" />

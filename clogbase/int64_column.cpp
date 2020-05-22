@@ -19,4 +19,7 @@ namespace clogbase {
 
 	Int64SetColumn::Int64SetColumn(const string& name) : SetColumn<int64_t>(name, int64_type()) {
 	}
+
+	Int64VectorColumn::Int64VectorColumn(const string& name) : VectorColumn<int64_t>(name, int64_type()) {
+	}
 }

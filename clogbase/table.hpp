@@ -22,11 +22,18 @@ namespace clogbase {
 		template <size_t KEY_SIZE>
 		friend class Index;
 
+		using Records = map<RecordId, File::Offset>;
+		using Iterator = Records::const_iterator;
+
 		const Int64Column id;
 
 		Table(Root &root, const string& name, initializer_list<const Column *> columns);
 		void open(Time max_time, bool read_only);
 		int64_t get_id();
+		
+		Iterator begin() const;
+		Iterator end() const;
+
 		bool exists(const Record& record) const;
 		bool load(RecordId id, Record& record) const;
 		void store(const Record& record, Context& context);
@@ -36,7 +43,7 @@ namespace clogbase {
 		set<AbstractIndex*> _indexes;
 		map<string, const Column*> _columns;
 		int64_t _next_id;
-		map<RecordId, File::Offset> _records;
+		Records _records;
 		File _key_file, _data_file;
 	};
 }

@@ -51,6 +51,14 @@ namespace clogbase {
 		return ++_next_id;
 	}
 
+	Table::Iterator Table::begin() const {
+		return _records.begin();
+	}
+
+	Table::Iterator Table::end() const {
+		return _records.end();
+	}
+
 	bool Table::exists(const Record& record) const {
 		return _records.find(record.get(id)) != _records.end();
 	}

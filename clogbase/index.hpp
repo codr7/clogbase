@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "abstract_index.hpp"
+#include "context.hpp"
 #include "file.hpp"
 #include "record.hpp"
 #include "root.hpp"
@@ -13,8 +14,6 @@
 
 namespace clogbase {
 	using namespace std;
-
-	class Context;
 
 	template <size_t KEY_SIZE>
 	class Index: public AbstractIndex {
@@ -27,6 +26,8 @@ namespace clogbase {
 		const string& name() const override;
 		void open(Time max_time, bool read_only) override;
 		Order compare_keys(const Key& x, const Key& y) const;
+		
+		Iterator begin() const;
 		Iterator end() const;
 
 		template <typename...T>
@@ -111,6 +112,11 @@ namespace clogbase {
 		}
 
 		return Order::EQ;
+	}
+
+	template <size_t KEY_SIZE>
+	typename Index<KEY_SIZE>::Iterator Index<KEY_SIZE>::begin() const {
+		return _records.begin();
 	}
 
 	template <size_t KEY_SIZE>

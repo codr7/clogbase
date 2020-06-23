@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 
-#include "types.hpp"
+#include "time.hpp"
 
 namespace clogbase {
 	using namespace std;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "tcolumn.hpp"
-#include "types.hpp"
+#include "time.hpp"
 
 namespace clogbase {
 	class TimeType : public ColumnType<Time> {

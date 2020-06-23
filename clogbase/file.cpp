@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "file.hpp"
 
 namespace clogbase {
@@ -61,7 +63,7 @@ namespace clogbase {
 
 	Time File::read_time() {
 		const auto ms(read_int64());
-		return Time(std::chrono::milliseconds(ms));
+		return Time(milliseconds(ms));
 	}
 
 	void File::write_int8(int8_t value) {

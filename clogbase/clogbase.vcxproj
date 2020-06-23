@@ -32,7 +32,7 @@
     <ClInclude Include="string_column.hpp" />
     <ClInclude Include="table.hpp" />
     <ClInclude Include="tcolumn.hpp" />
-    <ClInclude Include="types.hpp" />
+    <ClInclude Include="time.hpp" />
     <ClInclude Include="time_column.hpp" />
     <ClInclude Include="context.hpp" />
     <ClInclude Include="vector_column.hpp" />
@@ -46,6 +46,7 @@
     <ClCompile Include="model.cpp" />
     <ClCompile Include="string_column.cpp" />
     <ClCompile Include="table.cpp" />
+    <ClCompile Include="time.cpp" />
     <ClCompile Include="time_column.cpp" />
     <ClCompile Include="context.cpp" />
   </ItemGroup>
